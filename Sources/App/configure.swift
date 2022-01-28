@@ -4,6 +4,14 @@ import FluentSQLiteDriver
 import Vapor
 
 public func configure(_ app: Application) throws {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
+
+    let encoder = JSONEncoder()
+    encoder.keyEncodingStrategy = .convertToSnakeCase
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
+
     if let url = Environment.get("DATABASE_URL"), let config = PostgresConfiguration.heroku(url: url) {
         app.databases.use(.postgres(
             configuration: config
@@ -11,7 +19,7 @@ public func configure(_ app: Application) throws {
     } else {
         app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
     }
-    app.migrations.add(CreateTodo())
+    app.migrations.add(CreateCarType())
 
     try routes(app)
 }

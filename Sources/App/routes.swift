@@ -2,13 +2,14 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req in
-        return "It works!"
+    let appProperties = AppProperties()
+
+    let carTypeRepository = CarTypeRepository(database: app.db)
+    let carTypeService = CarTypeService(carTypeRepository: carTypeRepository, appProperties: appProperties)
+
+    app.get { req -> String in
+        return "cabs-swift"
     }
 
-    app.get("hello") { req -> String in
-        return "Hello, world!"
-    }
-
-    try app.register(collection: TodoController())
+    try app.register(collection: CarTypeController(carTypeService: carTypeService))
 }
