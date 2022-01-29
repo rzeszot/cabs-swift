@@ -11,6 +11,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 
 WORKDIR /build
 
+
 COPY ./Package.* ./
 RUN swift package resolve
 
