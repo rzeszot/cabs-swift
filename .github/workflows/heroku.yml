@@ -1,0 +1,27 @@
+name: Release to Heroku
+on:
+  push:
+    branches:
+      - main
+env:
+  APP_NAME: legacy-fighter-cabs
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+jobs:
+  deploy:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Login to Heroku Container
+      run: |
+        heroku container:login
+    - name: Build and push
+      run: |
+        heroku container:push -a $APP_NAME web --arg GITHUB_SHA=$GITHUB_SHA
+    - name: Release
+      run: |
+        heroku container:release -a $APP_NAME web
+    - name: Clean
+      run: |
+        rm -f /home/runner/.docker/config.json
