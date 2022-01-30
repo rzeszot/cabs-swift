@@ -6,39 +6,46 @@ struct CarTypeController: RouteCollection {
     let carTypeService: CarTypeService
 
     func boot(routes: RoutesBuilder) throws {
-//        routes.post("car-types", ":car_class", "register-car", use: registerCar)
-//        routes.post("car-types", ":car_class", "unregister-car", use: unregisterCar)
-        routes.post("car-types", use: create)
-        routes.get("car-types", ":id", use: find)
-        routes.get("car-types", use: list)
-        routes.post("car-types", ":id", "activate", use: activate)
-        routes.post("car-types", ":id", "deactivate", use: deactivate)
+        routes.group("car-types") { types in
+            types.post(use: create)
+            types.get(use: list)
+
+            types.group(":parameter") { paramter in
+                paramter.get(use: find)
+
+                paramter.post("activate", use: activate)
+                paramter.post("deactivate", use: deactivate)
+
+                paramter.post("register-car", use: registerCar)
+                paramter.post("unregister-car", use: unregisterCar)
+            }
+        }
     }
 
     // MARK: -
 
     func activate(request: Request) async throws -> String {
-        guard let id = request.parameters.get("id", as: UUID.self) else { throw Abort(.badRequest) }
+        guard let id = request.parameters.get("parameter", as: UUID.self) else { throw Abort(.badRequest) }
         try await carTypeService.activate(id)
         return "{}"
     }
 
 
     func deactivate(request: Request) async throws -> String {
-        guard let id = request.parameters.get("id", as: UUID.self) else { throw Abort(.badRequest) }
+        guard let id = request.parameters.get("parameter", as: UUID.self) else { throw Abort(.badRequest) }
         try await carTypeService.deactivate(id)
         return "{}"
     }
 
     func registerCar(request: Request) async throws -> String {
-        guard let carClass = request.parameters.get("car_class") else { throw Abort(.badRequest) }
+        guard let carClass = request.parameters.get("parameter") else { throw Abort(.badRequest) }
 
         try await carTypeService.registerCar(carClass)
         return "{}"
     }
 
     func unregisterCar(request: Request) async throws -> String {
-        guard let carClass = request.parameters.get("car_class") else { throw Abort(.badRequest) }
+        guard let carClass = request.parameters.get("parameter") else { throw Abort(.badRequest) }
 
         try await carTypeService.unregisterCar(carClass)
         return "{}"
@@ -52,7 +59,7 @@ struct CarTypeController: RouteCollection {
     }
 
     func find(request: Request) async throws -> CarTypeResponseDTO {
-        guard let id = request.parameters.get("id", as: UUID.self) else { throw Abort(.badRequest) }
+        guard let id = request.parameters.get("parameter", as: UUID.self) else { throw Abort(.badRequest) }
         guard let carType = try await carTypeService.load(id) else { throw Abort(.notFound) }
 
         return CarTypeResponseDTO(carType)
