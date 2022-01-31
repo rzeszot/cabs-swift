@@ -30,7 +30,6 @@ struct CarTypeController: RouteCollection {
         return "{}"
     }
 
-
     func deactivate(request: Request) async throws -> String {
         guard let id = request.parameters.get("parameter", as: UUID.self) else { throw Abort(.badRequest) }
         try await carTypeService.deactivate(id)

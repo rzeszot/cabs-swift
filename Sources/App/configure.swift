@@ -19,7 +19,9 @@ public func configure(_ app: Application) throws {
     } else {
         app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
     }
+
     app.migrations.add(CreateCarType())
+    app.migrations.add(CreateClient())
 
     try routes(app)
 }
