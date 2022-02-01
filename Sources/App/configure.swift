@@ -10,6 +10,7 @@ public func configure(_ app: Application) throws {
 
     let encoder = JSONEncoder()
     encoder.keyEncodingStrategy = .convertToSnakeCase
+    encoder.dateEncodingStrategy = .iso8601
     ContentConfiguration.global.use(encoder: encoder, for: .json)
 
     if let url = Environment.get("DATABASE_URL"), let config = PostgresConfiguration.heroku(url: url) {
@@ -22,6 +23,7 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(CreateCarType())
     app.migrations.add(CreateClient())
+    app.migrations.add(CreateContract())
 
     try routes(app)
 }

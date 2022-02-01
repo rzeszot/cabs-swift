@@ -4,7 +4,7 @@ import Fluent
 struct ClientRepository {
     let database: Database
 
-    func save(_ client: Client) async throws -> Client{
+    func save(_ client: Client) async throws -> Client {
         try await client.save(on: database)
         return client
     }
