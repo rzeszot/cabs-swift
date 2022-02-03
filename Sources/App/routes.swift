@@ -11,7 +11,8 @@ func routes(_ app: Application) throws {
     let clientService = ClientService(clientRepository: clientRepository)
 
     let contractRepository = ContractRepository(database: app.db)
-    let contractService = ContractService(contractRepository: contractRepository)
+    let attachmentRepository = ContractAttachmentRepository(database: app.db)
+    let contractService = ContractService(contractRepository: contractRepository, attachmentRepository: attachmentRepository)
 
     app.get { req -> String in
         return "cabs-swift"

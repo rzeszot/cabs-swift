@@ -15,6 +15,7 @@ struct ContractResponseDTO: Content {
     let accepted_at: Date?
     let rejected_at: Date?
     let change_date: Date?
+    let attachments: [ContractAttachmentResponseDTO]
 
     init(contract: Contract) {
         id = try! contract.requireID().uuidString
@@ -26,5 +27,6 @@ struct ContractResponseDTO: Content {
         accepted_at = contract.acceptedAt
         rejected_at = contract.rejectedAt
         change_date = contract.changeDate
+        attachments = contract.attachments.map(ContractAttachmentResponseDTO.init(attachment:))
     }
 }

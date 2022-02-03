@@ -10,16 +10,22 @@ struct ContractRepository {
     }
 
     func findBy(id: UUID) async throws -> Contract? {
-        try await Contract.find(id, on: database)
+        try await Contract.query(on: database)
+            .with(\.$attachments)
+            .filter(\.$id == id)
+            .first()
     }
 
     func findBy(partnerName: String) async throws -> [Contract] {
         try await Contract.query(on: database)
+            .with(\.$attachments)
             .filter(\.$partnerName == partnerName)
             .all()
     }
 
     func all() async throws -> [Contract] {
-        try await Contract.query(on: database).all()
+        try await Contract.query(on: database)
+            .with(\.$attachments)
+            .all()
     }
 }

@@ -39,9 +39,11 @@ class Contract: Model {
     @OptionalField(key: "change_date")
     var changeDate: Date?
 
+    @Children(for: \.$contract)
+    var attachments: [ContractAttachment]
+
     required init() {
 
     }
 
 }
-

@@ -18,12 +18,15 @@ public func configure(_ app: Application) throws {
             configuration: config
         ), as: .psql)
     } else {
-        app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+        app.databases.use(.sqlite(.file("/Users/rzeszot/Work/edu/cabs-swift/db.sqlite")), as: .sqlite)
     }
+
+    app.logger.logLevel = .trace
 
     app.migrations.add(CreateCarType())
     app.migrations.add(CreateClient())
     app.migrations.add(CreateContract())
+    app.migrations.add(CreateContractAttachment())
 
     try routes(app)
 }
