@@ -14,6 +14,9 @@ func routes(_ app: Application) throws {
     let attachmentRepository = ContractAttachmentRepository(database: app.db)
     let contractService = ContractService(contractRepository: contractRepository, attachmentRepository: attachmentRepository)
 
+    let driverRepository = DriverRepository(database: app.db)
+    let driverService = DriverService(driverRepository: driverRepository)
+
     app.get { req -> String in
         return "cabs-swift"
     }
@@ -21,4 +24,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: CarTypeController(carTypeService: carTypeService))
     try app.register(collection: ClientController(clientService: clientService))
     try app.register(collection: ContractController(contractService: contractService))
+    try app.register(collection: DriverController(driverService: driverService))
 }

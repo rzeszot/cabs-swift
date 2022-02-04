@@ -28,6 +28,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateContract())
     app.migrations.add(CreateContractAttachment())
     app.migrations.add(CreateAddress())
+    app.migrations.add(CreateDriver())
 
     try routes(app)
 }
