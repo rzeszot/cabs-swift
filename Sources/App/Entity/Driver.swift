@@ -37,8 +37,8 @@ class Driver: Model {
     @Field(key: "driver_license")
     var driverLicense: String
 
-//    @OptionalChild(for: \.$driver)
-//    var fee: DriverFee?
+    @OptionalChild(for: \.$driver)
+    var fee: DriverFee?
 
     @Field(key: "is_occupied")
     var isOccupied: Bool

@@ -20,6 +20,10 @@ struct ContractAttachmentRepository {
     }
 
     func findBy(contract: Contract)  async throws -> [ContractAttachment] {
-        contract.attachments
+        let contractId = try contract.requireID()
+
+        return try await ContractAttachment.query(on: database)
+            .filter(\.$contract.$id == contractId)
+            .all()
     }
 }
