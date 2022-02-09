@@ -13,9 +13,11 @@ class DriverService {
     let driver_license_regexp = try! NSRegularExpression(pattern: "/^[A-Z9]{5}[0-9]{6}[A-Z9]{2}[0-9][A-Z]{2}$/")
 
     private let driverRepository: DriverRepository
+    private let driverAttributeRepository: DriverAttributeRepository
 
-    init(driverRepository: DriverRepository) {
+    init(driverRepository: DriverRepository, driverAttributeRepository: DriverAttributeRepository) {
         self.driverRepository = driverRepository
+        self.driverAttributeRepository = driverAttributeRepository
     }
 
     // MARK: -
@@ -101,5 +103,15 @@ class DriverService {
         try await driverRepository.all()
     }
 
-}
+    func addAttribute(driverId: UUID, attributeName: String, value: String) async throws {
+        guard let driver = try await driverRepository.findBy(id: driverId) else { throw Abort(.notFound) }
 
+        let attribute = DriverAttribute()
+        attribute.$driver.id = try driver.requireID()
+        attribute.name = attributeName
+        attribute.value = value
+
+        _ = try await driverAttributeRepository.save(attribute)
+    }
+
+}

@@ -15,6 +15,7 @@ struct DriverResponseDTO: Content {
     let status: String
     let kind: String
     let photo: Data?
+    let attributes: [DriverAttributeDTO]
 
     init(driver: Driver) {
         id = try! driver.requireID()
@@ -24,5 +25,6 @@ struct DriverResponseDTO: Content {
         status = driver.status.rawValue
         kind = driver.kind.rawValue
         photo = driver.phoyo
+        attributes = driver.attributes.map(DriverAttributeDTO.init(attribute:))
     }
 }

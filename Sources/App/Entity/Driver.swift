@@ -43,6 +43,9 @@ class Driver: Model {
     @Field(key: "is_occupied")
     var isOccupied: Bool
 
+    @Children(for: \.$driver)
+    var attributes: [DriverAttribute]
+
     required init() {
 
     }

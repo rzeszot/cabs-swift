@@ -15,7 +15,8 @@ func routes(_ app: Application) throws {
     let contractService = ContractService(contractRepository: contractRepository, attachmentRepository: attachmentRepository)
 
     let driverRepository = DriverRepository(database: app.db)
-    let driverService = DriverService(driverRepository: driverRepository)
+    let driverAttributeRepository = DriverAttributeRepository(database: app.db)
+    let driverService = DriverService(driverRepository: driverRepository, driverAttributeRepository: driverAttributeRepository)
 
     app.get { req -> String in
         return "cabs-swift"

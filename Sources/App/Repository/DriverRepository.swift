@@ -17,6 +17,7 @@ struct DriverRepository {
 
     func all() async throws -> [Driver] {
         try await Driver.query(on: database)
+            .with(\.$attributes)
             .all()
     }
 }
