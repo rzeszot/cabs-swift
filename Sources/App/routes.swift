@@ -3,6 +3,7 @@ import Vapor
 
 func routes(_ app: Application) throws {
     let appProperties = AppProperties()
+    let clock = SystemClock()
 
     let carTypeRepository = CarTypeRepository(database: app.db)
     let carTypeService = CarTypeService(carTypeRepository: carTypeRepository, appProperties: appProperties)
@@ -18,6 +19,15 @@ func routes(_ app: Application) throws {
     let driverAttributeRepository = DriverAttributeRepository(database: app.db)
     let driverService = DriverService(driverRepository: driverRepository, driverAttributeRepository: driverAttributeRepository)
 
+    let driverPositionRepository = DriverPositionRepository(database: app.db)
+    let distanceCalculator = DistanceCalculator()
+    let trackingService = DriverTrackingService(
+        positionRepository: driverPositionRepository,
+        driverRepository: driverRepository,
+        distanceCalculator: distanceCalculator,
+        clock: clock
+    )
+
     app.get { req -> String in
         return "cabs-swift"
     }
@@ -26,4 +36,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: ClientController(clientService: clientService))
     try app.register(collection: ContractController(contractService: contractService))
     try app.register(collection: DriverController(driverService: driverService))
+    try app.register(collection: DriverTransckingController(trackingService: trackingService))
 }
