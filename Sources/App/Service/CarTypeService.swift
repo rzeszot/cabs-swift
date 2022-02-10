@@ -58,4 +58,43 @@ class CarTypeService {
         carType.deactivate()
         try await carTypeRepository.save(carType)
     }
+
+    func registerActiveCar(carClass: String) async throws {
+        guard let carType = try await findBy(carClass: carClass) else { throw Abort(.notFound) }
+        carType.registerCar()
+        return try await carTypeRepository.save(carType)
+    }
+
+    func unregisterActiveCar(carClass: String) async throws {
+        guard let carType = try await findBy(carClass: carClass) else { throw Abort(.notFound) }
+        carType.unregisterActiveCar()
+        return try await carTypeRepository.save(carType)
+    }
+
+    private func findBy(carClass: String) async throws -> CarType? {
+        try await carTypeRepository.findBy(carClass: carClass)
+    }
+
 }
+//
+//    public function findActiveCarClasses(): array
+//    {
+//        return array_map(fn(CarType $carType) => $carType->getCarClass(), $this->carTypeRepository->findByStatus(CarType::STATUS_ACTIVE));
+//    }
+//
+//    public function getMinNumberOfCars(string $carClass): int
+//    {
+//        if($carClass === CarType::CAR_CLASS_ECO) {
+//            return $this->appProperties->getMinNoOfCarsForEcoClass();
+//        } else {
+//            return 10;
+//        }
+//    }
+//
+//    public function removeCarType(string $carClass): void
+//    {
+//        $carType = $this->carTypeRepository->findByCarClass($carClass);
+//        if($carType !== null) {
+//            $this->carTypeRepository->delete($carType);
+//        }
+//    }

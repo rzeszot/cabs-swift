@@ -32,6 +32,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateDriverFee())
     app.migrations.add(CreateDriverAttribute())
     app.migrations.add(CreateDriverPosition())
+    app.migrations.add(CreateDriverSession())
 
     try routes(app)
 }
