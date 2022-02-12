@@ -35,6 +35,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateDriverSession())
     app.migrations.add(CreateInvoice())
     app.migrations.add(CreateAwardsAccount())
+    app.migrations.add(CreateTransit())
 
     try routes(app)
 }

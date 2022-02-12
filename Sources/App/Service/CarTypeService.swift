@@ -74,27 +74,23 @@ class CarTypeService {
     private func findBy(carClass: String) async throws -> CarType? {
         try await carTypeRepository.findBy(carClass: carClass)
     }
+    
+    func findActiveCarClasses() async throws -> [CarType.CarClass] {
+        try await carTypeRepository.findBy(status: CarType.Status.active.rawValue)
+            .map { $0.carClass }
+    }
+    
+    func getMinNumberOfCars(carClass: String) -> Int {
+        if carClass == CarType.CarClass.eco.rawValue {
+            return appProperties.minNoOfCarsForEcoClass
+        } else {
+            return 10
+        }
+    }
+    
+    func removeCarType(carClass: String) async throws {
+        guard let carType = try await carTypeRepository.findBy(carClass: carClass) else { throw Abort(.notFound) }
+        try await carTypeRepository.delete(carType)
+    }
 
 }
-//
-//    public function findActiveCarClasses(): array
-//    {
-//        return array_map(fn(CarType $carType) => $carType->getCarClass(), $this->carTypeRepository->findByStatus(CarType::STATUS_ACTIVE));
-//    }
-//
-//    public function getMinNumberOfCars(string $carClass): int
-//    {
-//        if($carClass === CarType::CAR_CLASS_ECO) {
-//            return $this->appProperties->getMinNoOfCarsForEcoClass();
-//        } else {
-//            return 10;
-//        }
-//    }
-//
-//    public function removeCarType(string $carClass): void
-//    {
-//        $carType = $this->carTypeRepository->findByCarClass($carClass);
-//        if($carType !== null) {
-//            $this->carTypeRepository->delete($carType);
-//        }
-//    }

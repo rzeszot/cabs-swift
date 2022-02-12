@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-class Driver: Model, Equatable {
+class Driver: Model, Equatable, Hashable {
     enum Kind: String, Codable {
         case candidate
         case regular
@@ -52,6 +52,10 @@ class Driver: Model, Equatable {
     
     static func == (lhs: Driver, rhs: Driver) -> Bool {
         try! lhs.requireID() == rhs.requireID()
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(try! requireID())
     }
 
 }

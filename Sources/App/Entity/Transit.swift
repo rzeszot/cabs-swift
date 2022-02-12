@@ -55,10 +55,10 @@ class Transit: Model {
     @OptionalField(key: "date")
     var date: Date?
     
-    @Parent(key: "from_id")
+    @Parent(key: "from_address_id")
     var from: Address
     
-    @Parent(key: "to_id")
+    @Parent(key: "to_address_id")
     var to: Address
 
     @Field(key: "pickup_address_change_counter")
