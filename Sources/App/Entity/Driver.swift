@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-class Driver: Model {
+class Driver: Model, Equatable {
     enum Kind: String, Codable {
         case candidate
         case regular
@@ -49,6 +49,9 @@ class Driver: Model {
     required init() {
 
     }
+    
+    static func == (lhs: Driver, rhs: Driver) -> Bool {
+        try! lhs.requireID() == rhs.requireID()
+    }
 
 }
-

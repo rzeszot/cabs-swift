@@ -37,6 +37,6 @@ struct DistanceCalculator {
     }
 }
 
-private func deg2rad(_ number: Double) -> Double {
+func deg2rad(_ number: Double) -> Double {
     return number * .pi / 180
 }
