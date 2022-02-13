@@ -79,6 +79,10 @@ class TransitService {
         self.carTypeService = carTypeService
         self.clock = clock
     }
+    
+    func listAll() async throws -> [Transit] {
+        try await transitRepository.listAll()
+    }
 
     func createTransit(clientId: UUID, from: Address, to: Address, carClass: String) async throws -> Transit {
         guard let client = try await clientRepository.findBy(id: clientId) else { throw Abort(.notFound) }

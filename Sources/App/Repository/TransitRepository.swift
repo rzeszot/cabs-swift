@@ -9,6 +9,14 @@ struct TransitRepository {
         return transit
     }
     
+    func listAll() async throws -> [Transit] {
+        try await Transit.query(on: database)
+            .with(\.$driver)
+            .with(\.$proposedDrivers)
+            .with(\.$driversRejections)
+            .all()
+    }
+    
     func findBy(transitId: UUID) async throws -> Transit? {
         try await Transit.query(on: database)
             .filter(\.$id == transitId)

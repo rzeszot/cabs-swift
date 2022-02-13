@@ -35,6 +35,33 @@ func routes(_ app: Application) throws {
         driverSessionRepository: driverSessionRepository,
         clock: clock
     )
+    
+    let transitRepository = TransitRepository(database: app.db)
+    let driverFeeRepository = DriverFeeRepository(database: app.db)
+    let driverFeeService = DriverFeeService(
+        driverFeeRepository: driverFeeRepository,
+        transitRepository: transitRepository
+    )
+    let driverNotificationService = DriverNotificationService()
+    let addressRepository = AddressRepository(database: app.db)
+    let geocodingService = GeocodingService()
+    let invoiceRepository = InvoiceRepository(database: app.db)
+    let invoiceGenerator = InvoiceGenerator(invoiceRepository: invoiceRepository)
+    let transitService = TransitService(
+        driverSessionRepository: driverSessionRepository,
+        driverPositionRepository: driverPositionRepository,
+        driverRepository: driverRepository,
+        driverFeeService: driverFeeService,
+        clientRepository: clientRepository,
+        notificationService: driverNotificationService,
+        addressRepository: addressRepository,
+        geocodingService: geocodingService,
+        transitRepository: transitRepository,
+        distanceCalculator: distanceCalculator,
+        invoiceGenerator: invoiceGenerator,
+        carTypeService: carTypeService,
+        clock: clock
+    )
 
     app.get { req -> String in
         return "cabs-swift"
@@ -46,4 +73,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: DriverController(driverService: driverService))
     try app.register(collection: DriverTransckingController(trackingService: trackingService))
     try app.register(collection: DriverSessionController(driverSessionService: driverSessionService, clock: clock))
+    try app.register(collection: TransitController(transitService: transitService))
 }
