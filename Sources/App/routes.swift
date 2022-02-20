@@ -74,4 +74,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: DriverTransckingController(trackingService: trackingService))
     try app.register(collection: DriverSessionController(driverSessionService: driverSessionService, clock: clock))
     try app.register(collection: TransitController(transitService: transitService))
+    try app.register(collection: AddressController(addressRepository: addressRepository))
 }
