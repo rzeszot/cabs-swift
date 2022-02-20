@@ -14,6 +14,8 @@ struct TransitController: RouteCollection {
                 transit.get(use: getTransit)
                 transit.post("change-address-to", use: changeAddressTo)
                 transit.post("change-address-from", use: changeAddressFrom)
+
+                transit.post("cancel", use: cancel)
             }
         }
     }
@@ -68,17 +70,24 @@ struct TransitController: RouteCollection {
 
         return TransitResponseDTO(transit: transit)
     }
-      
+
+    func cancel(request: Request) async throws -> TransitResponseDTO {
+        let transitId = try request.transitId()
+
+        try await transitService.cancelTransit(transitId: transitId)
+
+        let transit = try await transitService.loadTransit(id: transitId)!
+        return TransitResponseDTO(transit: transit)
+    }
+
 }
 
-//
-//    #[Route('/transits/{id}/cancel', methods: ['POST'])]
-//    public function cancel(int $id): Response
-//    {
-//        $this->transitService->cancelTransit($id);
-//        return new JsonResponse($this->transitService->loadTransit($id));
-//    }
-//
+private extension Request {
+    func transitId() throws -> UUID {
+        try parameters.get("transit_id", as: UUID.self).unwrap(or: Abort(.badRequest))
+    }
+}
+
 //    #[Route('/transits/{id}/publish', methods: ['POST'])]
 //    public function publishTransit(int $id): Response
 //    {

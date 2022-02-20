@@ -206,7 +206,7 @@ class TransitService {
         }
 
         transit.status = .cancelled
-        transit.driver = nil
+        transit.$driver.id = nil
         try transit.setKm(0)
         transit.awaitingDriversResponses = 0
         
