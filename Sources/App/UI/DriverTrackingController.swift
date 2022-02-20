@@ -11,6 +11,7 @@ struct DriverTransckingController: RouteCollection {
 
             positions.group(":driver_id") { driver in
                 driver.get("total", use: calculateTravelledDistance)
+                driver.get("all", use: getAllPositionsForDriver)
             }
         }
     }
@@ -37,4 +38,12 @@ struct DriverTransckingController: RouteCollection {
         let from: Date
         let to: Date
     }
+
+    func getAllPositionsForDriver(request: Request) async throws -> DriverPositionsAllResponseDTO {
+        guard let driverId = request.parameters.get("driver_id", as: UUID.self) else { throw Abort(.badRequest) }
+
+        let positions = try await trackingService.getLastPositionsFor(driverId: driverId)
+        return DriverPositionsAllResponseDTO(driverID: driverId, positions: positions)
+    }
+
 }

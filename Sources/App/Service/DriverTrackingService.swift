@@ -64,4 +64,10 @@ class DriverTrackingService {
         return distanceTravelled
     }
 
+    func getLastPositionsFor(driverId: UUID) async throws -> [DriverPosition] {
+        guard (try await driverRepository.findBy(id: driverId)) != nil else { throw Abort(.notFound) }
+        let positions = try await positionRepository.getLastPositionsFor(driverId: driverId)
+        return positions
+    }
+
 }

@@ -30,3 +30,22 @@ struct DriverTotalDistanceResponseDTO: Content {
         self.total = total
     }
 }
+
+struct DriverPositionsAllResponseDTO: Content {
+    let driverId: UUID
+    let positions: [PositionDTO]
+
+    struct PositionDTO: Content {
+        let latitude: Double
+        let longitude: Double
+        let seenAt: Date
+    }
+
+    init(driverID: UUID, positions: [DriverPosition]) {
+        self.positions = positions.map { pos in
+            PositionDTO(latitude: pos.latitude, longitude: pos.longitude, seenAt: pos.seenAt)
+        }
+        self.driverId = driverID
+    }
+
+}

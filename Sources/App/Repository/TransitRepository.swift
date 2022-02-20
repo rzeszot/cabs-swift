@@ -8,6 +8,22 @@ struct TransitRepository {
         try await transit.save(on: database)
         return transit
     }
+
+    func addProposed(driverId: UUID, to transitId: UUID) async throws {
+        let item = Transit.ProposedDriver()
+        item.$driver.id = driverId
+        item.$transit.id = transitId
+
+        try await item.save(on: database)
+    }
+
+    func addRejected(driverId: UUID, to transitId: UUID) async throws {
+        let item = Transit.RejectedDriver()
+        item.$driver.id = driverId
+        item.$transit.id = transitId
+
+        try await item.save(on: database)
+    }
     
     func listAll() async throws -> [Transit] {
         try await Transit.query(on: database)

@@ -297,7 +297,7 @@ class TransitService {
                             latitudeMax: latitudeMax,
                             longitudeMin: longitudeMin,
                             longitudeMax: longitudeMax,
-                            date: clock.now().addingTimeInterval(-5*60)
+                            date: clock.now().addingTimeInterval(-15*60)
                         )
                     
                     if driversAvgPositions.count != 0 {
@@ -341,9 +341,9 @@ class TransitService {
                         for driverAvgPosition in driversAvgPositions {
                             let driver = driverAvgPosition.driver
                             
-                            if driver.status == .active && driver.isOccupied {
+                            if driver.status == .active && !driver.isOccupied {
                                 if !transit.driversRejections.contains(driver) {
-                                    transit.proposedDrivers.append(driver)
+                                    try await transitRepository.addProposed(driverId: try driver.requireID(), to: transitId)
                                     transit.awaitingDriversResponses += 1
                                     
                                     notificationService.notifyAboutPossibleTransit(driverId: try driver.requireID(), transitId: transitId)

@@ -51,6 +51,7 @@ struct DriverSessionRepository {
         let driversIds = try drivers.map { try $0.requireID() }
 
         return try await DriverSession.query(on: database)
+            .with(\.$driver)
             .filter(\.$driver.$id ~~ driversIds)
             .filter(\.$carClass ~~ carClasses)
             .filter(\.$loggedOutAt == nil)

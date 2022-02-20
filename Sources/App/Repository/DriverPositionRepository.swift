@@ -34,6 +34,7 @@ struct DriverPositionRepository {
         date: Date
     ) async throws -> [(driver: Driver, latitude: Double, longitude: Double)] {
         let positions = try await DriverPosition.query(on: database)
+            .with(\.$driver)
             .filter(\.$latitude >= latitudeMin)
             .filter(\.$latitude <= latitudeMax)
             .filter(\.$longitude >= longitudeMin)
@@ -53,13 +54,22 @@ struct DriverPositionRepository {
         var result: [(driver: Driver, latitude: Double, longitude: Double)] = []
         
         for (driver, coordinates) in tmp {
-            let latitude = coordinates.reduce(coordinates.first!.latitude) { $0 + $1.latitude } / Double(coordinates.count)
-            let longitude = coordinates.reduce(coordinates.first!.longitude) { $0 + $1.longitude } / Double(coordinates.count)
+            let latitude = coordinates.reduce(0) { $0 + $1.latitude } / Double(coordinates.count)
+            let longitude = coordinates.reduce(0) { $0 + $1.longitude } / Double(coordinates.count)
             
             result.append((driver: driver, latitude: latitude, longitude: longitude))
         }
 
         return result
+    }
+
+
+    func getLastPositionsFor(driverId: UUID) async throws -> [DriverPosition] {
+        return try await DriverPosition.query(on: database)
+            .with(\.$driver)
+            .filter(\.$driver.$id == driverId)
+            .sort(\.$seenAt, .descending)
+            .all()
     }
 
 }

@@ -9,6 +9,9 @@ struct TransitResponseDTO: Content {
     let to: AddressResponseDTO
     let driver: DriverResponseDTO?
     let client: ClientResponseDTO
+    let published_at: Date?
+    let proposed: [DriverResponseDTO]
+    let rejected: [DriverResponseDTO]
     
     // TODO: claim
 
@@ -20,6 +23,9 @@ struct TransitResponseDTO: Content {
         to = AddressResponseDTO(address: transit.to)
         driver = transit.driver.map(DriverResponseDTO.init(driver:))
         client = ClientResponseDTO(client: transit.client)
+        published_at = transit.published
+        proposed = transit.proposedDrivers.map(DriverResponseDTO.init(driver:))
+        rejected = transit.driversRejections.map(DriverResponseDTO.init(driver:))
     }
 }
 
