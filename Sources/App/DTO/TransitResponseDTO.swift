@@ -79,29 +79,4 @@ struct TransitCreateRequestDTO: Content {
     let carClass: String
     let from: AddressCreateDTO
     let to: AddressCreateDTO
-    
-    struct AddressCreateDTO: Content {
-        let country: String
-        let district: String
-        let city: String
-        let street: String
-        let buildingNumber: Int
-        let additionalNumber: Int?
-        let postalCode: String
-        let name: String
-        
-        func toAddress() -> Address {
-            let addr = Address()
-            addr.country = country
-            addr.district = district
-            addr.city = city
-            addr.street = street
-            addr.buildingNumber = buildingNumber
-            addr.additionalNumber = additionalNumber
-            addr.postalCode = postalCode
-            addr.name = name
-            
-            return addr
-        }
-    }
 }
