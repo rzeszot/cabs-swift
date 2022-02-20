@@ -36,6 +36,8 @@ struct DriverController: RouteCollection {
         guard let id = request.parameters.get("driver_id", as: UUID.self) else { throw Abort(.badRequest) }
         guard let driver = try await driverService.load(driverId: id) else { throw Abort(.notFound) }
 
+        // TODO?
+
         return DriverResponseDTO(driver: driver)
     }
 

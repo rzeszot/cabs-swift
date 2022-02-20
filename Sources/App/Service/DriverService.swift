@@ -10,7 +10,7 @@ struct CannotChangeLicenseError: Error {
 }
 
 class DriverService {
-    let driver_license_regexp = try! NSRegularExpression(pattern: "/^[A-Z9]{5}[0-9]{6}[A-Z9]{2}[0-9][A-Z]{2}$/")
+    let driver_license_regexp = try! NSRegularExpression(pattern: "^[A-Z9]{5}[0-9]{6}[A-Z9]{2}[0-9][A-Z]{2}$")
 
     private let driverRepository: DriverRepository
     private let driverAttributeRepository: DriverAttributeRepository

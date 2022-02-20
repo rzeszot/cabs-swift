@@ -13,9 +13,11 @@ struct CarTypeController: RouteCollection {
             types.group(":parameter") { paramter in
                 paramter.get(use: find)
 
+                // id
                 paramter.post("activate", use: activate)
                 paramter.post("deactivate", use: deactivate)
 
+                // car class
                 paramter.post("register-car", use: registerCar)
                 paramter.post("unregister-car", use: unregisterCar)
             }
