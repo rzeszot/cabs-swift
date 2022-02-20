@@ -79,14 +79,22 @@ class TransitService {
         self.carTypeService = carTypeService
         self.clock = clock
     }
+
+    func loadTransit(id: UUID) async throws -> Transit? {
+        try await transitRepository.findBy(transitId: id)
+    }
     
     func listAll() async throws -> [Transit] {
         try await transitRepository.listAll()
     }
 
     func createTransit(clientId: UUID, from: Address, to: Address, carClass: String) async throws -> Transit {
-        guard let client = try await clientRepository.findBy(id: clientId) else { throw Abort(.notFound) }
-        
+        let client = try await clientRepository.findBy(id: clientId)
+        guard let client = client else { throw Abort(.notFound) }
+
+        try await addressRepository.save(from)
+        try await addressRepository.save(to)
+
         let transit = Transit()
         
         // FIXME later: add some exceptions handling
@@ -99,11 +107,15 @@ class TransitService {
         transit.carType = carClass
         transit.status = .draft
         transit.dateTime = clock.now()
-        
+        transit.pickupAddressChangeCounter = 0
+        transit.awaitingDriversResponses = 0
+
         let distance = distanceCalculator.calculateByMap(latitudeFrom: geoFrom.0, longitudeFrom: geoFrom.1, latitudeTo: geoTo.0, longitudeTo: geoTo.1)
         try transit.setKm(Float(distance))
    
-        return try await transitRepository.save(transit)
+        _ = try await transitRepository.save(transit)
+
+        return try await transitRepository.findBy(transitId: try transit.requireID())!
     }
 
     func changeTransitAddressFromNew(transitId: UUID, newAddress: Address) async throws {
@@ -147,7 +159,7 @@ class TransitService {
             throw CannotChangeAddressFromError()
         }
         
-        transit.from = newAddress
+        transit.$from.id = try newAddress.requireID()
         
         let distance = distanceCalculator.calculateByMap(latitudeFrom: geoFromNew.0, longitudeFrom: geoFromNew.1, latitudeTo: geoFromOld.0, longitudeTo: geoFromOld.1)
         try transit.setKm(Float(distance))
@@ -173,7 +185,7 @@ class TransitService {
         let geoFromNew = try await geocodingService.geocodeAddress(address: transit.from)
         let geoFromOld = try await geocodingService.geocodeAddress(address: newAddress)
         
-        transit.to = newAddress
+        transit.$to.id = try newAddress.requireID()
         
         let distance = distanceCalculator.calculateByMap(latitudeFrom: geoFromNew.0, longitudeFrom: geoFromNew.1, latitudeTo: geoFromOld.0, longitudeTo: geoFromOld.1)
         try transit.setKm(Float(distance))

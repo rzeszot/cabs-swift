@@ -43,7 +43,7 @@ private func getTariffAndKmRate(transit: Transit) -> (String, Double) {
     if isSylwester { // should of used `leap` for awesomeness
         return ("Sylwester", 3.50)
     } else {
-        var weekday = (calendar.component(.weekday, from: date) - calendar.firstWeekday) % 7
+        var weekday = (calendar.component(.weekday, from: date) - calendar.firstWeekday + 1) % 7
         if weekday == 0 { weekday = 7 }
         
         switch weekday {

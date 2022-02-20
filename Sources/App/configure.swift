@@ -48,3 +48,13 @@ private extension PostgresConfiguration {
         return config
     }
 }
+
+extension Optional {
+    func unwrap(or error: Error) throws -> Wrapped {
+        if let wrapped = self {
+            return wrapped
+        } else {
+            throw error
+        }
+    }
+}

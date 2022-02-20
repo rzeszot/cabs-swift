@@ -6,11 +6,12 @@ struct DriverRepository {
 
     func save(_ driver: Driver) async throws -> Driver {
         try await driver.save(on: database)
-        return driver
+        return try await findBy(id: try driver.requireID())!
     }
 
     func findBy(id: UUID) async throws -> Driver? {
         try await Driver.query(on: database)
+            .with(\.$attributes)
             .filter(\.$id == id)
             .first()
     }

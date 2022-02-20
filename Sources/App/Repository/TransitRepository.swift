@@ -12,8 +12,11 @@ struct TransitRepository {
     func listAll() async throws -> [Transit] {
         try await Transit.query(on: database)
             .with(\.$driver)
+            .with(\.$client)
             .with(\.$proposedDrivers)
             .with(\.$driversRejections)
+            .with(\.$from)
+            .with(\.$to)
             .all()
     }
     
@@ -21,8 +24,11 @@ struct TransitRepository {
         try await Transit.query(on: database)
             .filter(\.$id == transitId)
             .with(\.$driver)
+            .with(\.$client)
             .with(\.$proposedDrivers)
             .with(\.$driversRejections)
+            .with(\.$from)
+            .with(\.$to)
             .first()
     }
     

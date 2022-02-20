@@ -12,9 +12,10 @@ struct TransitController: RouteCollection {
             
             transits.group(":transit_id") { transit in
                 transit.get(use: getTransit)
+                transit.post("change-address-to", use: changeAddressTo)
+                transit.post("change-address-from", use: changeAddressFrom)
             }
         }
-        
     }
     
     // MARK: -
@@ -25,14 +26,17 @@ struct TransitController: RouteCollection {
     }
     
     func getTransit(request: Request) async throws -> TransitResponseDTO {
-        guard let transitId = request.parameters.get(":transit_id", as: UUID.self) else { throw Abort(.badRequest) }
+        guard let transitId = request.parameters.get("transit_id", as: UUID.self) else { throw Abort(.badRequest) }
 
-        let transit = try await transitService.findDriversForTransit(transitId: transitId)
+        let transit = try await transitService.loadTransit(id: transitId)
+            .unwrap(or: Abort(.notFound))
+
         return TransitResponseDTO(transit: transit)
     }
     
     func createTransit(request: Request) async throws -> TransitResponseDTO {
         let dto = try request.content.decode(TransitCreateRequestDTO.self)
+
         let transit = try await transitService.createTransit(
             clientId: dto.clientId,
             from: dto.from.toAddress(),
@@ -42,34 +46,31 @@ struct TransitController: RouteCollection {
         
         return TransitResponseDTO(transit: transit)
     }
+
+    func changeAddressTo(request: Request) async throws -> TransitResponseDTO {
+        guard let transitId = request.parameters.get("transit_id", as: UUID.self) else { throw Abort(.badRequest) }
+        let dto = try request.content.decode(AddressCreateDTO.self)
+
+        try await transitService.changeTransitAddressToNew(transitId: transitId, newAddress: dto.toAddress())
+
+        let transit = try await transitService.loadTransit(id: transitId)!
+
+        return TransitResponseDTO(transit: transit)
+    }
+
+    func changeAddressFrom(request: Request) async throws -> TransitResponseDTO {
+        guard let transitId = request.parameters.get("transit_id", as: UUID.self) else { throw Abort(.badRequest) }
+        let dto = try request.content.decode(AddressCreateDTO.self)
+
+        try await transitService.changeTransitAddressFromNew(transitId: transitId, newAddress: dto.toAddress())
+
+        let transit = try await transitService.loadTransit(id: transitId)!
+
+        return TransitResponseDTO(transit: transit)
+    }
       
 }
 
-
-
-
-
-//
-//    #[Route('/transits', methods: ['POST'])]
-//    public function createTransit(TransitDTO $transitDTO): Response
-//    {
-//        $transit = $this->transitService->createTransit($transitDTO);
-//        return new JsonResponse($this->transitService->loadTransit($transit->getId()));
-//    }
-//
-//    #[Route('/transits/{id}/changeAddressTo', methods: ['POST'])]
-//    public function changeAddressTo(int $id, AddressDTO $addressDTO): Response
-//    {
-//        $this->transitService->changeTransitAddressTo($id, $addressDTO);
-//        return new JsonResponse($this->transitService->loadTransit($id));
-//    }
-//
-//    #[Route('/transits/{id}/changeAddressFrom', methods: ['POST'])]
-//    public function changeAddressFrom(int $id, AddressDTO $addressDTO): Response
-//    {
-//        $this->transitService->changeTransitAddressFrom($id, $addressDTO);
-//        return new JsonResponse($this->transitService->loadTransit($id));
-//    }
 //
 //    #[Route('/transits/{id}/cancel', methods: ['POST'])]
 //    public function cancel(int $id): Response
@@ -120,3 +121,5 @@ struct TransitController: RouteCollection {
 //        return new JsonResponse($this->transitService->loadTransit($id));
 //    }
 //}
+
+//        let transit = try await transitService.findDriversForTransit(transitId: transitId)

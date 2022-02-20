@@ -19,6 +19,7 @@ class CarTypeService {
 
         if let byCarClass = byCarClass {
             byCarClass.description = dto.description
+            try await carTypeRepository.save(byCarClass)
             return byCarClass
         } else {
             let carType = CarType(carClass: CarType.CarClass(rawValue: dto.carClass)!, description: dto.description, minNoOfCarsToActivateClass: dto.minNoOfCarsToActivateClass)
