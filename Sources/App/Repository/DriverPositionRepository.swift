@@ -9,6 +9,13 @@ struct DriverPositionRepository {
         return position
     }
 
+    func findBy(id: UUID) async throws -> DriverPosition? {
+        try await DriverPosition.query(on: database)
+            .with(\.$driver)
+            .filter(\.$id == id)
+            .first()
+    }
+
     func findByDriverAndSeenAtBetweenOrderBySeenAtAsc(driver: Driver, from: Date, to: Date) async throws -> [DriverPosition] {
         let driverId = try driver.requireID()
 

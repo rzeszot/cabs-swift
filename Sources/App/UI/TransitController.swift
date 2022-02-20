@@ -16,6 +16,8 @@ struct TransitController: RouteCollection {
                 transit.post("change-address-from", use: changeAddressFrom)
 
                 transit.post("cancel", use: cancel)
+                transit.post("publish", use: publish)
+                transit.post("find-drivers", use: findDriversForTransit)
             }
         }
     }
@@ -80,6 +82,24 @@ struct TransitController: RouteCollection {
         return TransitResponseDTO(transit: transit)
     }
 
+    func publish(request: Request) async throws -> TransitResponseDTO {
+        let transitId = try request.transitId()
+
+        _ = try await transitService.publishTransit(transitId: transitId)
+
+        let transit = try await transitService.loadTransit(id: transitId)!
+        return TransitResponseDTO(transit: transit)
+    }
+
+    func findDriversForTransit(request: Request) async throws -> TransitResponseDTO {
+        let transitId = try request.transitId()
+
+        _ = try await transitService.findDriversForTransit(transitId: transitId)
+
+        let transit = try await transitService.loadTransit(id: transitId)!
+        return TransitResponseDTO(transit: transit)
+    }
+
 }
 
 private extension Request {
@@ -88,19 +108,7 @@ private extension Request {
     }
 }
 
-//    #[Route('/transits/{id}/publish', methods: ['POST'])]
-//    public function publishTransit(int $id): Response
-//    {
-//        $this->transitService->publishTransit($id);
-//        return new JsonResponse($this->transitService->loadTransit($id));
-//    }
-//
-//    #[Route('/transits/{id}/findDrivers', methods: ['POST'])]
-//    public function findDriversForTransit(int $id): Response
-//    {
-//        $this->transitService->findDriversForTransit($id);
-//        return new JsonResponse($this->transitService->loadTransit($id));
-//    }
+
 //
 //    #[Route('/transits/{id}/accept/{driverId}', methods: ['POST'])]
 //    public function acceptTransit(int $id, int $driverId): Response
@@ -130,5 +138,3 @@ private extension Request {
 //        return new JsonResponse($this->transitService->loadTransit($id));
 //    }
 //}
-
-//        let transit = try await transitService.findDriversForTransit(transitId: transitId)

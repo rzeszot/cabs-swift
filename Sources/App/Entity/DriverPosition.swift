@@ -7,7 +7,7 @@ class DriverPosition: Model, Equatable {
     @ID(key: .id)
     var id: UUID?
 
-    @Parent(key: "driver")
+    @Parent(key: "driver_id")
     var driver: Driver
 
     @Field(key: "latitude")

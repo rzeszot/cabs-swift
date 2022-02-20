@@ -6,12 +6,16 @@ import Vapor
 public func configure(_ app: Application) throws {
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
+    decoder.dateDecodingStrategy = .iso8601
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
     let encoder = JSONEncoder()
     encoder.keyEncodingStrategy = .convertToSnakeCase
     encoder.dateEncodingStrategy = .iso8601
     ContentConfiguration.global.use(encoder: encoder, for: .json)
+
+    let queryDecoder = URLEncodedFormDecoder(configuration: .init(dateDecodingStrategy: .iso8601))
+    ContentConfiguration.global.use(urlDecoder: queryDecoder)
 
     if let url = Environment.get("DATABASE_URL"), let config = PostgresConfiguration.heroku(url: url) {
         app.databases.use(.postgres(

@@ -248,12 +248,12 @@ class TransitService {
                     
                     // FIXME: to refactor when the final business logic will be determined
                     
-                    if transit.published!.addingTimeInterval(300) > clock.now()
+                    if transit.published!.addingTimeInterval(300) < clock.now()
                         || distanceToCheck >= 20
                         || transit.status == .cancelled
                     {
                         transit.status = .driver_assignment_failed
-                        transit.driver = nil
+                        transit.$driver.id = nil
                         try transit.setKm(0)
                         transit.awaitingDriversResponses = 0
                         

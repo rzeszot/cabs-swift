@@ -34,7 +34,9 @@ class DriverTrackingService {
         position.latitude = latitude
         position.longitude = longitude
 
-        return try await positionRepository.save(position)
+        _ = try await positionRepository.save(position)
+
+        return try await positionRepository.findBy(id: try position.requireID())!
     }
 
     func calculateTravelledDistance(driverId: UUID, from: Date, to: Date) async throws -> Double {
